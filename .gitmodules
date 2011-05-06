@@ -1,0 +1,3 @@
+[submodule "lib/rrd"]
+	path = lib/rrd
+	url = git@github.com:plainlystated/javascript-rrd.git

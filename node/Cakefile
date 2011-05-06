@@ -1,0 +1,71 @@
+serial_dev = '/dev/cu.usbserial-10KP0043'
+sys = require('sys')
+spawn = require('child_process').spawn
+
+RRD = require('./lib/rrd/lib/rrd').RRD
+
+rrd_file = "thermostat.rrd"
+
+task 'rrd:create', 'Create new RRD file', () ->
+  console.log "Creating empty RRD file"
+
+  ds1 = "DS:temperature:GAUGE:600:U:U"
+  ds2 = "DS:state:GAUGE:600:U:U"
+  rra_day = "RRA:AVERAGE:0.5:1:300"
+  rra_month = "RRA:AVERAGE:0.5:31:300"
+  new RRD(rrd_file).create(ds1, ds2, rra_day, rra_month, printError)
+
+task 'rrd:delete', 'Delete RRD file', () ->
+  console.log "Dropping RRD file"
+  new RRD(rrd_file).destroy printError
+
+task 'rrd:redo', 'Recreate RRD file', () ->
+  invoke 'rrd:delete'
+  invoke 'rrd:create'
+
+task 'rrd:sample_value', 'sample', (options) ->
+  value = options[0] || Math.round(Math.random() * 20)
+  console.log "Updating with value: #{value}"
+  console.log new Date
+  new RRD(rrd_file).update new Date, value, printError
+
+task 'rrd:fetch_recent', 'fetch recent data', () ->
+  new RRD(rrd_file).fetch (results) ->
+    console.log(sys.inspect results)
+
+task 'rrd:read_from_serial', 'listen for input on a file and push values to rrd', () ->
+  serial = spawn('python', ['serial_proxy.py', serial_dev])
+
+  rrd = new RRD(rrd_file)
+  serial.stdout.on('data', (data) ->
+    data = data.toString()
+    console.log(data)
+
+    parsedLine = parseTemperatureLine(data)
+    if parsedLine.currentTemp?
+      console.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
+      rrd.update new Date, parsedLine.currentTemp, parsedLine.state, printError
+  )
+
+  serial.stderr.on('data', (data) ->
+    console.log('stderr: ' + data)
+  )
+
+printError = (err) ->
+  console.log(" - #{err}") if err?
+
+parseTemperatureLine = (string) ->
+  result = string.split(" ")
+  currentTemp = result[0]
+  state = result[1]
+
+  if currentTemp.match("^[0-9.]*$")
+    console.log state
+    if state == "heat-on"
+      s = 1
+    else
+      s = 0
+    return { currentTemp: currentTemp, state: s }
+  else
+    return {}
+
