@@ -10,10 +10,11 @@ task 'rrd:create', 'Create new RRD file', () ->
   console.log "Creating empty RRD file"
 
   ds1 = "DS:temperature:GAUGE:600:U:U"
-  ds2 = "DS:state:GAUGE:600:U:U"
+  ds2 = "DS:target_temp:GAUGE:600:U:U"
+  ds3 = "DS:state:GAUGE:600:U:U"
   rra_day = "RRA:AVERAGE:0.5:1:300"
   rra_month = "RRA:AVERAGE:0.5:31:300"
-  new RRD(rrd_file).create(ds1, ds2, rra_day, rra_month, printError)
+  new RRD(rrd_file).create(ds1, ds2, ds3, rra_day, rra_month, printError)
 
 task 'rrd:delete', 'Delete RRD file', () ->
   console.log "Dropping RRD file"
@@ -44,7 +45,7 @@ task 'rrd:read_from_serial', 'listen for input on a file and push values to rrd'
     parsedLine = parseTemperatureLine(data)
     if parsedLine.currentTemp?
       console.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
-      rrd.update new Date, parsedLine.currentTemp, parsedLine.state, printError
+      rrd.update new Date, parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state, printError
   )
 
   serial.stderr.on('data', (data) ->
@@ -57,15 +58,18 @@ printError = (err) ->
 parseTemperatureLine = (string) ->
   result = string.split(" ")
   currentTemp = result[0]
-  state = result[1]
+  targetTemp = result[1]
+  state = result[2]
 
   if currentTemp.match("^[0-9.]*$")
     console.log state
-    if state == "heat-on"
+    if state.match(/heat-on/)
       s = 1
+    else if state.match(/ac-on/)
+      s = -1
     else
       s = 0
-    return { currentTemp: currentTemp, state: s }
+    return { currentTemp: currentTemp, targetTemp: targetTemp, state: s }
   else
     return {}
 

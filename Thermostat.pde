@@ -1,39 +1,59 @@
-bool heatingStatus;
-
-const int off = false;
-const int on = true;
+int hvacStatus;
+int thermostatMode;
 
 const float temperature_correction = -6;
 
-const int desiredTemp = 68;
+const int desiredTemp = 70;
 
 unsigned long nextLogTime;
 
 unsigned long lastStatusChangeRequest;
 
 int heatPin = 13;
+int coolPin = 12;
+
+const int COOL = -1;
+const int OFF = 0;
+const int HEAT = 1;
 
 void setup(void) {
   Serial.begin(9600);
   pinMode(heatPin, OUTPUT);
-  heatingStatus = off;
+  hvacStatus = OFF;
   nextLogTime = 0;
   lastStatusChangeRequest = 0;
+  thermostatMode = COOL;
 }
 
 void loop(void) {
   float temp_f = currentTemp();
-  if (heatingStatus == on && shouldTurnOffHeat(temp_f)) {
-    setHeatStatus(off);
-  } else if (heatingStatus == off && shouldTurnOnHeat(temp_f)) {
-    setHeatStatus(on);
-  }
 
+  if (thermostatMode == HEAT) {
+    checkHeat(temp_f);
+  } else if (thermostatMode == COOL) {
+    checkCool(temp_f);
+  }
   if (nextLogTime <= millis()) {
     logToSerial(temp_f);
     nextLogTime += 15000;
   }
   delay(1000);
+}
+
+void checkCool(float temp_f) {
+  if (hvacStatus == COOL && shouldTurnOffAc(temp_f)) {
+    setHvacStatus(OFF);
+  } else if (hvacStatus == OFF && shouldTurnOnAc(temp_f)) {
+    setHvacStatus(COOL);
+  }
+}
+
+void checkHeat(float temp_f) {
+  if (hvacStatus == HEAT && shouldTurnOffHeat(temp_f)) {
+    setHvacStatus(OFF);
+  } else if (hvacStatus == OFF && shouldTurnOnHeat(temp_f)) {
+    setHvacStatus(HEAT);
+  }
 }
 
 float currentTemp() {
@@ -45,23 +65,55 @@ float currentTemp() {
 void logToSerial(float temp_f) {
   Serial.print(temp_f);
   Serial.print(" ");
-  if (heatingStatus == on) {
+
+  Serial.print(desiredTemp);
+  Serial.print(" ");
+  if (hvacStatus == HEAT) {
     Serial.println("heat-on");
+  } else if (hvacStatus == COOL) {
+    Serial.println("ac-on");
   } else {
-    Serial.println("heat-off");
+    Serial.println("off");
   }
 }
 
-void setHeatStatus(bool status) {
-  Serial.print("setting heat: ");
+void setHvacStatus(int status) {
+  Serial.print("setting hvac status: ");
   Serial.println(status);
 
-  if (status == on) {
+  if (status == HEAT) {
     digitalWrite(heatPin, HIGH);
+    digitalWrite(coolPin, LOW);
+  } else if (status == COOL) {
+    digitalWrite(coolPin, HIGH);
+    digitalWrite(heatPin, LOW);
   } else {
     digitalWrite(heatPin, LOW);
+    digitalWrite(coolPin, LOW);
   }
-  heatingStatus = status;
+  hvacStatus = status;
+}
+
+bool shouldTurnOffAc(float temp) {
+  if (temp < (desiredTemp - 4)) {
+    if (changeRequestTimelyEnough(lastStatusChangeRequest)) {
+      return true;
+    }
+    lastStatusChangeRequest = millis();
+  }
+
+  return false;
+}
+
+bool shouldTurnOnAc(float temp) {
+  if (temp > (desiredTemp + 2)) {
+    if (changeRequestTimelyEnough(lastStatusChangeRequest)) {
+      return true;
+    }
+    lastStatusChangeRequest = millis();
+  }
+
+  return false;
 }
 
 bool shouldTurnOffHeat(float temp) {
