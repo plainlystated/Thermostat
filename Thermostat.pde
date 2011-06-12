@@ -3,7 +3,7 @@ int thermostatMode;
 
 const float temperature_correction = -6;
 
-const int desiredTemp = 70;
+const int desiredTemp = 65;
 
 unsigned long nextLogTime;
 
@@ -19,6 +19,7 @@ const int HEAT = 1;
 void setup(void) {
   Serial.begin(9600);
   pinMode(heatPin, OUTPUT);
+  pinMode(coolPin, OUTPUT);
   hvacStatus = OFF;
   nextLogTime = 0;
   lastStatusChangeRequest = 0;
