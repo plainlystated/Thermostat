@@ -17,7 +17,7 @@ task 'rrd:create', 'Create new RRD file', () ->
   new RRD(rrd_file).create([ds1, ds2, ds3, rra_day, rra_month], printError)
 
 task 'rrd:graph', 'Graph recent temps', () ->
-  new RRD(rrd_file).graph("temp.png", [{name: "temperature", color: "#FF0000"}, {name: target_temp, color: "#FF5500"}], printError)
+  new RRD(rrd_file).graph("temp.png", [{name: "temperature", color: "#FF0000"}, {name: "target_temp", color: "#FF5500"}], printError)
 
 task 'rrd:delete', 'Delete RRD file', () ->
   console.log "Dropping RRD file"
