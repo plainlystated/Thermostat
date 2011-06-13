@@ -1,9 +1,9 @@
 int hvacStatus;
 int thermostatMode;
 
-const float temperature_correction = -6;
+const float temperature_correction = -8;
 
-const int desiredTemp = 65;
+const int desiredTemp = 68;
 
 unsigned long nextLogTime;
 
