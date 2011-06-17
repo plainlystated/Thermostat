@@ -1,0 +1,78 @@
+body {
+  background:url(/images/bg.png);
+  font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+#header, #header-description {
+  height: 100px;
+  color: #8A6750;
+}
+#header-description {
+  font-size: 30px;
+  text-align: right;
+}
+#header-description div {
+  position: absolute;
+  bottom: 0.5em;
+}
+#header h1 {
+  font-family: 'Rock Salt', arial, serif;
+  margin: 0;
+}
+#holder-container {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 0 1px 3px #666;
+  background: #fff;
+  margin-bottom: 0.5em;
+}
+#holder {
+  height: 376px;
+  margin: 0 0.25em;
+}
+.column-content {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 0 1px 3px #666;
+  background: #fff;
+  padding: 0.5em;
+}
+#graph-list ul {
+  margin: 0;
+}
+
+.content-header {
+  margin-bottom: 0.25em;
+  font-weight: bold;
+  font: 100.01% "Fontin Sans", Fontin-Sans, "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Lucida, Verdana, Helvetica, sans-serif;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.container_12 {
+  margin-bottom: 0.5em;
+}
+
+li {
+  margin-bottom: 0.25em;
+}
+
+#container, #container-header {
+  font-family: 'Josefin Sans', arial, serif;
+  font-size: 21px;
+}
+
+a {
+  text-decoration: none
+}
+
+p {
+  margin-top: 0;
+}

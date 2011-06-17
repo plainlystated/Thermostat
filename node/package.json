@@ -1,0 +1,9 @@
+{
+    "name": "power-hungry"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "2.3.11"
+    , "ejs": ">= 0.0.1"
+  }
+}

@@ -1,0 +1,2 @@
+a = () ->
+  console.log('a')

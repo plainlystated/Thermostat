@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <title><%= view.title %></title>
+
+    <link href="/stylesheets/grid.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/power-hungry.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Sans:100,regular' rel='stylesheet' type='text/css'>
+
+    <script src="/javascripts/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/javascripts/jquery.flot.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/javascripts/power-hungry.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/graph.js" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="container-header" class="container_12">
+      <div id="header" class="grid_6">
+        <h1><%- view.title %></h1>
+      </div>
+      <div id="header-description" class="prefix_1 grid_5">
+        <div>
+          <%= view.tagLine %>
+        </div>
+      </div>
+    </div>
+
+    <div class="container_12">
+      <div id="holder-container" class="grid_12">
+        <div id="holder">
+          <img src="/images/spinner.gif" class="spinner" id="graph-spinner">
+        </div>
+      </div>
+    </div>
+
+    <%- body %>
+
+    <div id="container" class="container_12">
+      <div id="graph-list" class="grid_4">
+        <div class="column-content">
+        </div>
+      </div>
+
+
+      <div id="graph-details" class="grid_4">
+        <div class="column-content">
+        </div>
+      </div>
+
+      <div id="site-about" class="grid_4">
+        <div class="column-content">
+          <div class="content-header">Hardware</div>
+          <div>
+            The data is collected using Kill-A-Watts, wirelessly networked together using XBee radios. Check out Adafruit's <a href="http://www.ladyada.net/make/tweetawatt/">kits</a>.
+          </div>
+          <br />
+
+          <div class="content-header">Software</div>
+          <div>
+            This project was done in ruby, and the <a href="https://github.com/plainlystated/power_hungry">code is on github</a>.
+          </div>
+          <br />
+
+          <div class="content-header">More Info</div>
+          <div>
+            See my <a href="http://techspeak.plainlystated.com/search/label/power-hungry">blog</a>.
+          </div>
+          <br />
+
+          <div class="content-header">Author</div>
+          <div>
+            <a href="http://plainlystated.com">Patrick Schless</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script id="source" language="javascript" type="text/javascript">
+      var graph = new Graph("<%= view.slug %>");
+      graph.loadJSON();
+    </script>
+  </body>
+</html>
