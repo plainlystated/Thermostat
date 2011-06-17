@@ -1,8 +1,7 @@
-serial_dev = '/dev/cu.usbserial-10KP0043'
 sys = require('sys')
-spawn = require('child_process').spawn
 
 RRD = require('./lib/rrd/lib/rrd').RRD
+Collector= require('./lib/collector.coffee').Collector
 
 rrd_file = "thermostat.rrd"
 
@@ -43,42 +42,9 @@ task 'rrd:fetch_recent', 'fetch recent data', () ->
   new RRD(rrd_file).fetch (results) ->
     console.log(sys.inspect results)
 
-task 'rrd:read_from_serial', 'listen for input on a file and push values to rrd', () ->
-  serial = spawn('python', ['serial_proxy.py', serial_dev])
-
-  rrd = new RRD(rrd_file)
-  serial.stdout.on('data', (data) ->
-    data = data.toString()
-    console.log(data)
-
-    parsedLine = parseTemperatureLine(data)
-    if parsedLine.currentTemp?
-      console.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
-      rrd.update new Date, parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state, printError
-  )
-
-  serial.stderr.on('data', (data) ->
-    console.log('stderr: ' + data)
-  )
+task 'rrd:collect', 'listen for input on a file and push values to memcached', () ->
+  new Collector(3000)
 
 printError = (err) ->
   console.log(" - #{err}") if err?
-
-parseTemperatureLine = (string) ->
-  result = string.split(" ")
-  currentTemp = result[0]
-  targetTemp = result[1]
-  state = result[2]
-
-  if currentTemp.match("^[0-9.]*$")
-    console.log state
-    if state.match(/heat-on/)
-      s = 1
-    else if state.match(/ac-on/)
-      s = -1
-    else
-      s = 0
-    return { currentTemp: currentTemp, targetTemp: targetTemp, state: s }
-  else
-    return {}
 
