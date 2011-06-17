@@ -1,37 +1,26 @@
-serial_dev = '/dev/cu.usbserial-10KP0043'
-
 spawn = require('child_process').spawn
-# serial = spawn('python', ['serial_proxy.py', serial_dev])
-
-MemcacheClient = require('./memcache').Client
+RRD = require('./rrd/lib/rrd').RRD
+fs = require('fs')
 
 class Collector
-  constructor: (@port) ->
-    @memcache = setupMemcachedClient()
-    this.writeToMemcache(1)
-    @memcache.disconnect
+  constructor: (@rrdFile, @port) ->
+    this.collectData()
 
-    # this.collectData()
+  collectData: () =>
+    serial = spawn('python', ['serial_proxy.py', usbDev()])
 
-  # collectData: () ->
-  #   serial.stdout.on('data', (data) ->
-  #     data = data.toString()
-  #     console.log(data)
+    @rrd = new RRD(@rrdFile)
+    serial.stdout.on('data', (data) ->
+      data = data.toString()
+      console.log(data)
+      parsedLine = parseTemperatureLine(data)
+      if parsedLine.currentTemp?
+        console.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
+        rrd.update new Date, parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state, printError
+    )
 
-  #     parsedLine = parseTemperatureLine(data)
-  #     if parsedLine.currentTemp?
-  #       console.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
-  #   )
-
-  #   serial.stderr.on('data', (data) ->
-  #     console.log('stderr: ' + data)
-  #   )
-
-  writeToMemcache: (data) ->
-    @memcache.set('key1', {value: 1})
-    @memcache.get('key1', (err, result) ->
-      for key in result
-        console.log("#{key}")
+    serial.stderr.on('data', (data) ->
+      console.log('stderr: ' + data)
     )
 
   parseTemperatureLine = (string) ->
@@ -71,5 +60,8 @@ class Collector
     )
     client.connect()
     return client
+
+  usbDev = () ->
+    return fs.readFileSync('./config/usb_dev')
 
 exports.Collector = Collector

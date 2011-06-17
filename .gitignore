@@ -1,4 +1,7 @@
 nohup.out
-temp.log
+*.log
+*.xml
+node/config/usb_dev
+
 *.png
 *.rrd
