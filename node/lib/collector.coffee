@@ -28,7 +28,7 @@ class Collector
 
   serveRRDData: (port) ->
     http.createServer((req, res) =>
-      res.writeHead(200, {'Content-Type': 'text/plain'})
+      res.writeHead(200, {'Content-Type': 'text/xml'})
       @rrd.dump (err, xml) ->
         res.end xml
     ).listen(port, "127.0.0.1")

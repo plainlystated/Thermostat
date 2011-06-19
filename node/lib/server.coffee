@@ -1,4 +1,5 @@
 express = require('express')
+UpdateSyncer = require('./updateSyncer').UpdateSyncer
 
 class Server
   constructor: (rrdFile, port) ->
@@ -10,6 +11,7 @@ class Server
       }
     }
     this.startServer(views)
+    new UpdateSyncer('localhost', 3001)
 
   startServer: (views) ->
     @app = module.exports = express.createServer()
