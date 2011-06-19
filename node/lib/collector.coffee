@@ -44,23 +44,6 @@ class Collector
   printError = (err) ->
     console.log(" - #{err}") if err?
 
-  setupMemcachedClient = () ->
-    client = new MemcacheClient()
-    client.on('connect', () ->
-      console.log('connected to memcached')
-    )
-    client.on('close', () ->
-      console.log('disconnected from memcached')
-    )
-    client.on('timeout', () ->
-      console.log('timeout connecting to memcached')
-    )
-    client.on('error', (e) ->
-      console.log("memcached error: #{e}")
-    )
-    client.connect()
-    return client
-
   usbDev = () ->
     return fs.readFileSync('./config/usb_dev')
 
