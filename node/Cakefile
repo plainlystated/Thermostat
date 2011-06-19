@@ -2,6 +2,7 @@ sys = require('sys')
 
 RRD = require('./lib/rrd/lib/rrd').RRD
 Collector= require('./lib/collector.coffee').Collector
+Server= require('./lib/server.coffee').Server
 
 rrd_file = "thermostat.rrd"
 
@@ -43,7 +44,10 @@ task 'rrd:fetch_recent', 'fetch recent data', () ->
     console.log(sys.inspect results)
 
 task 'rrd:collect', 'listen for input on a file and push values to memcached', () ->
-  new Collector(rrd_file, 3000)
+  new Collector(rrd_file, 3001)
+
+task 'rrd:serve', 'Serve the app, and occasionally check for updates', () ->
+  new Server(rrd_file, 3000)
 
 printError = (err) ->
   console.log(" - #{err}") if err?
