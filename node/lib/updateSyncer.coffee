@@ -31,6 +31,7 @@ class UpdateSyncer
   importRRD: (filenameBase) ->
     RD.restore("#{filenameBase}.xml", "#{filenameBase}.rrd", () ->
       fs.symlink("#{filenameBase}.rrd", "../db/thermostat-synced.rrd")
+    )
 
   formatTimestamp = (date) ->
     year = date.getFullYear()

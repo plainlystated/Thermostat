@@ -3,6 +3,7 @@ sys = require('sys')
 RRD = require('./lib/rrd/lib/rrd').RRD
 Collector= require('./lib/collector.coffee').Collector
 Server= require('./lib/server.coffee').Server
+GoogleCalendar = require('./lib/googleCalendar').GoogleCalendar
 
 rrd_file = "thermostat.rrd"
 
@@ -48,6 +49,9 @@ task 'rrd:collect', 'listen for input on a file and push values to memcached', (
 
 task 'rrd:serve', 'Serve the app, and occasionally check for updates', () ->
   new Server(rrd_file, 3000)
+
+task 'google', 'google', () ->
+  new GoogleCalendar()
 
 printError = (err) ->
   console.log(" - #{err}") if err?
