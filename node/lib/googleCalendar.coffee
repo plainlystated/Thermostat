@@ -4,13 +4,13 @@ DateFormatter = require('./dateFormatter').DateFormatter
 
 class GoogleCalendar
   constructor: () ->
-    @calendar = "/calendar/feeds/963shrhe9d8g3d5h7le9uu72l8%40group.calendar.google.com/public/basic?singleevents=true&orderby=starttime&start-max=#{startMax()}&start-min=#{startMin()}"
     @client = http.createClient(80, "www.google.com")
     # this.getDetailed()
 
   getDetailed: () =>
+    calendar = "/calendar/feeds/963shrhe9d8g3d5h7le9uu72l8%40group.calendar.google.com/public/basic?singleevents=true&orderby=starttime&start-max=#{startMax()}&start-min=#{startMin()}"
     xml = ""
-    request = @client.request('GET', @calendar, {})
+    request = @client.request('GET', calendar, {})
     request.end()
     request.on('response', (response) =>
       response.setEncoding('utf8')
@@ -35,22 +35,20 @@ class GoogleCalendar
     )
 
   getCurrent: (cb) =>
-    try
-      xml = ""
-      request = @client.request('GET', @calendar, {})
-      request.end()
-      request.on('response', (response) =>
-        response.setEncoding('utf8')
-        response.on('data', (chunk) ->
-          xml += chunk
-        )
-        response.on('end', () =>
-          this.currentSetting xml, (entry) =>
-            cb(entry)
-        )
+    calendar = "/calendar/feeds/963shrhe9d8g3d5h7le9uu72l8%40group.calendar.google.com/public/basic?singleevents=true&orderby=starttime&start-max=#{startMax()}&start-min=#{startMin()}"
+    xml = ""
+    request = @client.request('GET', calendar, {})
+    request.end()
+    request.on('response', (response) =>
+      response.setEncoding('utf8')
+      response.on('data', (chunk) ->
+        xml += chunk
       )
-    catch err
-      console.log("Error parsing calendar: #{err}")
+      response.on('end', () =>
+        this.currentSetting xml, (entry) =>
+          cb(entry)
+      )
+    )
 
   currentSetting: (xml, cb) =>
     parser = sax.parser(true)
