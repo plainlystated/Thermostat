@@ -3,7 +3,8 @@ int thermostatMode;
 
 const float temperature_correction = -8;
 
-const int desiredTemp = 68;
+const int defaultTemp = 68;
+int desiredTemp;
 
 unsigned long nextLogTime;
 
@@ -24,10 +25,13 @@ void setup(void) {
   nextLogTime = 0;
   lastStatusChangeRequest = 0;
   thermostatMode = COOL;
+  desiredTemp = defaultTemp;
 }
 
 void loop(void) {
   float temp_f = currentTemp();
+
+  desiredTemp = readDesiredTemp();
 
   if (thermostatMode == HEAT) {
     checkHeat(temp_f);
@@ -39,6 +43,14 @@ void loop(void) {
     nextLogTime += 15000;
   }
   delay(1000);
+}
+
+int readDesiredTemp() {
+  if (Serial.available() > 0) {
+    return Serial.read();
+  } else {
+    return desiredTemp;
+  }
 }
 
 void checkCool(float temp_f) {

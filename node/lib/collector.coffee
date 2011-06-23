@@ -2,17 +2,17 @@ spawn = require('child_process').spawn
 RRD = require('./rrd/lib/rrd').RRD
 fs = require('fs')
 http = require('http')
-
+GoogleCalendar = require('./googleCalendar').GoogleCalendar
 
 class Collector
   constructor: (@rrdFile, port) ->
     @rrd = new RRD(rrdFile)
     this.collectData(@rrd)
     this.serveRRDData(port)
+    @googleCalendar = new GoogleCalendar
 
   collectData: (rrd) =>
     serial = spawn('python', ['serial_proxy.py', usbDev()])
-
     serial.stdout.on('data', (data) ->
       data = data.toString()
       console.log(data)
@@ -25,6 +25,12 @@ class Collector
     serial.stderr.on('data', (data) ->
       console.log('stderr: ' + data)
     )
+
+    setInterval () =>
+      @googleCalendar.getCurrent (current) ->
+        console.log("setting current temp to #{current.temperature}")
+        serial.stdin.write("#{String.fromCharCode(current.temperature)}\n")
+    , 1000
 
   serveRRDData: (port) ->
     http.createServer((req, res) =>

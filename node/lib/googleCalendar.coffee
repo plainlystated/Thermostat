@@ -35,19 +35,22 @@ class GoogleCalendar
     )
 
   getCurrent: (cb) =>
-    xml = ""
-    request = @client.request('GET', @calendar, {})
-    request.end()
-    request.on('response', (response) =>
-      response.setEncoding('utf8')
-      response.on('data', (chunk) ->
-        xml += chunk
+    try
+      xml = ""
+      request = @client.request('GET', @calendar, {})
+      request.end()
+      request.on('response', (response) =>
+        response.setEncoding('utf8')
+        response.on('data', (chunk) ->
+          xml += chunk
+        )
+        response.on('end', () =>
+          this.currentSetting xml, (entry) =>
+            cb(entry)
+        )
       )
-      response.on('end', () =>
-        this.currentSetting xml, (entry) =>
-          cb(entry)
-      )
-    )
+    catch err
+      console.log("Error parsing calendar: #{err}")
 
   currentSetting: (xml, cb) =>
     parser = sax.parser(true)
