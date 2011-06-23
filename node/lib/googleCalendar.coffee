@@ -58,7 +58,10 @@ class GoogleCalendar
       if tag.name == "entry"
         this.readEntry(parser, cb)
 
-    parser.write(xml).close()
+    try
+      parser.write(xml).close()
+    catch error
+      console.log("error parsing xml: #{error}")
 
   readEntry: (parser, cb) =>
     entry = {}
