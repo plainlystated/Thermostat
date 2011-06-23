@@ -28,8 +28,9 @@ class Collector
 
     setInterval () =>
       @googleCalendar.getCurrent (current) ->
+        console.log("updating with #{current.temperature}")
         serial.stdin.write("#{String.fromCharCode(current.temperature)}\n")
-    , 1000
+    , 10000
 
   serveRRDData: (port) ->
     http.createServer((req, res) =>

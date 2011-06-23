@@ -9,6 +9,7 @@ class GoogleCalendar
 
   getDetailed: () =>
     calendar = "/calendar/feeds/963shrhe9d8g3d5h7le9uu72l8%40group.calendar.google.com/public/basic?singleevents=true&orderby=starttime&start-max=#{startMax()}&start-min=#{startMin()}"
+    console.log("fetching #{calendar}")
     xml = ""
     request = @client.request('GET', calendar, {})
     request.end()

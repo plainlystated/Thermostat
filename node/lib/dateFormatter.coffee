@@ -21,7 +21,7 @@ class DateFormatter
     "-#{twoDigits(hours)}:00"
 
   twoDigits = (number) ->
-    if number > 10
+    if number >= 10
       number
     else
       "0#{number}"
