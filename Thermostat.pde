@@ -5,6 +5,7 @@ const float temperature_correction = -8;
 
 const int defaultTemp = 68;
 int desiredTemp;
+int readTemp;
 
 unsigned long nextLogTime;
 
@@ -47,7 +48,10 @@ void loop(void) {
 
 int readDesiredTemp() {
   if (Serial.available() > 0) {
-    return Serial.read();
+    readTemp = Serial.read();
+    Serial.flush();
+    Serial.println(readTemp);
+    return readTemp;
   } else {
     return desiredTemp;
   }
