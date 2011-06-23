@@ -51,7 +51,9 @@ task 'rrd:serve', 'Serve the app, and occasionally check for updates', () ->
   new Server(rrd_file, 3000)
 
 task 'google', 'google', () ->
-  new GoogleCalendar()
+  google = new GoogleCalendar
+  google.getCurrent (entry) ->
+    console.log "current setting: #{entry.temperature} @ #{entry.range.start} - #{entry.range.end}"
 
 printError = (err) ->
   console.log(" - #{err}") if err?
