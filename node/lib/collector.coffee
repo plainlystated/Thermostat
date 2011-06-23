@@ -28,7 +28,6 @@ class Collector
 
     setInterval () =>
       @googleCalendar.getCurrent (current) ->
-        console.log("setting current temp to #{current.temperature}")
         serial.stdin.write("#{String.fromCharCode(current.temperature)}\n")
     , 1000
 
