@@ -1,24 +1,35 @@
 class Graph
   constructor: (@slug, @graphLabel) ->
 
-  loadJSON: () ->
-    $.getJSON(this.jsonPath(), (data) =>
+  init: () ->
+    this.loadJSON('day')
+    $('#past-day').click () =>
+      this.loadJSON('day')
+    $('#past-week').click () =>
+      this.loadJSON('week')
+    $('#past-month').click () =>
+      this.loadJSON('month')
+
+  loadJSON: (windowSize) ->
+    $.getJSON(this.jsonPath(windowSize), (lineData) =>
       $('.spinner').fadeOut(200)
       console.log("loaded data from #{this.jsonPath()}")
 
-      setTimeout () ->
-        $.plot($('#holder'),
-          [ { data: data, label: @graphLabel } ], {
-            xaxis: { mode: 'time', ticks: [data[3][0], data[7][0], data[11][0], data[15][0]] },
-            legend: { position: 'sw' }
-          }
-        )
-      , 250
+      lines = for line in lineData
+        console.log line
+        { data: line.data, label: line.label }
+
+      $.plot($('#holder'),
+        lines, {
+          xaxis: { mode: 'time' },
+          legend: { position: 'sw' }
+        }
+      )
 
     )
 
-  jsonPath: () ->
-    "/#{@slug}/data/month"
+  jsonPath: (path) ->
+    "/#{@slug}/data/#{path}"
 
 root = exports ? this
 root.Graph = Graph

@@ -37,12 +37,17 @@
     <div id="container" class="container_12">
       <div id="graph-list" class="grid_4">
         <div class="column-content">
+          <ul>
+            <li id="past-day"><a href="#">Past Day</a></li>
+            <li id="past-week"><a href="#">Past Week</a></li>
+            <li id="past-month"><a href="#">Past Month</a></li>
+          <ul>
         </div>
       </div>
 
-
       <div id="graph-details" class="grid_4">
         <div class="column-content">
+          Some data...
         </div>
       </div>
 
@@ -50,19 +55,19 @@
         <div class="column-content">
           <div class="content-header">Hardware</div>
           <div>
-            The data is collected using Kill-A-Watts, wirelessly networked together using XBee radios. Check out Adafruit's <a href="http://www.ladyada.net/make/tweetawatt/">kits</a>.
+            This project uses an Arduino, some solid-state relays, and a temperature sensor from Adafruit.
           </div>
           <br />
 
           <div class="content-header">Software</div>
           <div>
-            This project was done in ruby, and the <a href="https://github.com/plainlystated/power_hungry">code is on github</a>.
+            NodeJS (in coffeescript) is used to collect, manage, and serve the data, which is persisted in a Round Robin Database.
           </div>
           <br />
 
           <div class="content-header">More Info</div>
           <div>
-            See my <a href="http://techspeak.plainlystated.com/search/label/power-hungry">blog</a>.
+            See my <a href="http://techspeak.plainlystated.com/search/label/hot-or-not">blog</a>.
           </div>
           <br />
 
@@ -75,7 +80,7 @@
     </div>
     <script id="source" language="javascript" type="text/javascript">
       var graph = new Graph("<%= view.slug %>");
-      graph.loadJSON();
+      graph.init();
     </script>
   </body>
 </html>
