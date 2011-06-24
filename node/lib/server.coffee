@@ -69,7 +69,8 @@ class Server
         data = for dataSource in ['temperature', 'target_temp']
           line = { label: dataSource }
           line['data'] = for record in records
-            [record.timestamp * 1000, record[dataSource]]
+            timestampWithTimezoneOffset = parseInt(record.timestamp) - 60 * (new Date).getTimezoneOffset()
+            [timestampWithTimezoneOffset * 1000, record[dataSource]]
           line
         cb(data)
 
