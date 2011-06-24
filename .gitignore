@@ -4,5 +4,6 @@ nohup.out
 node/config/usbDev
 node/config/rrdSource
 
-*.png
+temp.png
+thermostat.png
 *.rrd
