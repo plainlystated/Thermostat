@@ -1,7 +1,8 @@
 nohup.out
 *.log
 *.xml
-node/config/usb_dev
+node/config/usbDev
+node/config/rrdSource
 
 *.png
 *.rrd

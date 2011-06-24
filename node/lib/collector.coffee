@@ -37,9 +37,8 @@ class Collector
       res.writeHead(200, {'Content-Type': 'text/xml'})
       @rrd.dump (err, xml) ->
         res.end xml
-    ).listen(port, "127.0.0.1")
+    ).listen(port, "0.0.0.0")
     console.log("Listening for RRD data requests on port #{port}")
-
 
   parseTemperatureLine = (string) ->
     result = string.split(" ")
@@ -63,6 +62,6 @@ class Collector
     console.log(" - #{err}") if err?
 
   usbDev = () ->
-    return fs.readFileSync('./config/usb_dev').toString().replace(/(\n|\r)+$/, '')
+    fs.readFileSync('./config/usbDev').toString().replace(/(\n|\r)+$/, '')
 
 exports.Collector = Collector

@@ -1,5 +1,6 @@
 express = require('express')
 UpdateSyncer = require('./updateSyncer').UpdateSyncer
+fs = require('fs')
 
 class Server
   constructor: (rrdFile, port) ->
@@ -11,7 +12,7 @@ class Server
       }
     }
     this.startServer(views)
-    new UpdateSyncer('localhost', 3001)
+    new UpdateSyncer(rrdSourceHost(), 80, views.hotOrNot.slug)
 
   startServer: (views) ->
     @app = module.exports = express.createServer()
@@ -58,5 +59,8 @@ class Server
 
     @app.listen(3000)
     console.log("Express server listening on port %d", @app.address().port)
+
+  rrdSourceHost = () ->
+    fs.readFileSync('./config/rrdSource').toString().replace(/(\n|\r)+$/, '')
 
 exports.Server = Server
