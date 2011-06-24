@@ -5,7 +5,8 @@ Collector= require('./lib/collector.coffee').Collector
 Server= require('./lib/server.coffee').Server
 GoogleCalendar = require('./lib/googleCalendar').GoogleCalendar
 
-rrd_file = "thermostat.rrd"
+rrd_file = "./db/hot-or-not.rrd"
+DateFormatter = require('./lib/dateFormatter').DateFormatter
 
 task 'rrd:create', 'Create new RRD file', () ->
   console.log "Creating empty RRD file"
@@ -41,8 +42,11 @@ task 'rrd:sample_value', 'sample', (options) ->
   new RRD(rrd_file).update new Date, value, printError
 
 task 'rrd:fetch_recent', 'fetch recent data', () ->
-  new RRD(rrd_file).fetch (results) ->
-    console.log(sys.inspect results)
+  start = DateFormatter.rrd(new Date(new Date() - (1000*60*60*24)))
+  end = DateFormatter.rrd(new Date)
+  new RRD(rrd_file).fetch start, end, (records) ->
+    for record in records
+      console.log record
 
 task 'rrd:collect', 'listen for input on a file and push values to memcached', () ->
   new Collector(rrd_file, 3001)

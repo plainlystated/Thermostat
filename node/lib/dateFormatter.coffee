@@ -1,8 +1,11 @@
 class DateFormatter
   constructor: (@d) ->
 
+  rrd: () ->
+    Math.round(@d.valueOf() / 1000)
+
   filenameTimestamp: () =>
-    timestamp = "#{this.year()}-#{twoDigits(this.month())}-#{twoDigits(this.date())}.#{twoDigits(this.hours())}#{twoDigits(this.minutes())}#{twoDigits(this.seconds())}"
+    "#{this.year()}-#{twoDigits(this.month())}-#{twoDigits(this.date())}.#{twoDigits(this.hours())}#{twoDigits(this.minutes())}#{twoDigits(this.seconds())}"
 
   rfc3339: () =>
     "#{this.year()}-#{twoDigits(this.month())}-#{twoDigits(this.date())}T#{twoDigits(this.hours())}:#{twoDigits(this.minutes())}:#{twoDigits(this.seconds())}#{this.timezoneOffset()}"
@@ -28,5 +31,8 @@ class DateFormatter
       number
     else
       "0#{number}"
+
+DateFormatter.rrd = (date) ->
+  new DateFormatter(date).rrd()
 
 exports.DateFormatter = DateFormatter

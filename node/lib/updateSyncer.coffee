@@ -5,9 +5,10 @@ RRD = require('./rrd/lib/rrd').RRD
 
 class UpdateSyncer
   constructor: (@host, @port, @app) ->
+    this.checkForUpdates()
     setInterval () =>
       this.checkForUpdates()
-    , 1000 * 5
+    , 1000 * 60 * 10
 
   checkForUpdates: () =>
     timestamp = new DateFormatter(new Date).filenameTimestamp()
@@ -35,11 +36,11 @@ class UpdateSyncer
 
   importRRD: (path, filenameBase) =>
     RRD.restore "#{path}/#{filenameBase}.xml", "#{path}/#{filenameBase}.rrd", (err, i, out) =>
+
+      fs.unlink "#{path}/#{filenameBase}.xml"
+
       symlink = "#{path}/#{@app}.rrd"
-      fs.unlink "#{path}/#{filenameBase}.xml", (err, stdin, stdout) ->
-        console.log(stdout)
       fs.unlink symlink, () ->
-        fs.symlink "#{filenameBase}.rrd", symlink, (err) ->
-          console.log(err)
+        fs.symlink "#{filenameBase}.rrd", symlink
 
 exports.UpdateSyncer = UpdateSyncer
