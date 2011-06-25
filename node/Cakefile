@@ -16,7 +16,7 @@ task 'rrd:create', 'Create new RRD file', () ->
   ds3 = "DS:state:GAUGE:600:U:U"
   rra_day = "RRA:AVERAGE:0.5:1:300"
   rra_month = "RRA:AVERAGE:0.5:31:300"
-  new RRD(rrd_file).create([ds1, ds2, ds3, rra_day, rra_month], printError)
+  new RRD(rrd_file).create([ds1, ds2, ds3, rra_day, rra_month], {}, printError)
 
 task 'rrd:graph:day', 'Graph recent temps', () ->
   new RRD(rrd_file).graph("temp.png", [{name: "temperature", color: "#FF0000"}, {name: "target_temp", color: "#FF5500"}], {start: DateFormatter.rrd(new Date(new Date() - (1000*60*60*8)))}, printError)
@@ -35,11 +35,31 @@ task 'rrd:redo', 'Recreate RRD file', () ->
   invoke 'rrd:delete'
   invoke 'rrd:create'
 
-task 'rrd:sample_value', 'sample', (options) ->
-  value = options[0] || Math.round(Math.random() * 20)
-  console.log "Updating with value: #{value}"
-  console.log new Date
-  new RRD(rrd_file).update new Date, value, printError
+task 'rrd:demo_data', 'fill with lots of sample data', (options) ->
+  invoke 'rrd:delete'
+  ds1 = "DS:temperature:GAUGE:600:U:U"
+  ds2 = "DS:target_temp:GAUGE:600:U:U"
+  ds3 = "DS:state:GAUGE:600:U:U"
+  rra_day = "RRA:AVERAGE:0.5:1:300"
+  rra_month = "RRA:AVERAGE:0.5:31:300"
+
+  oneMinute = 1000 * 60
+  date = new Date(new Date() - oneMinute * 60 * 24 * 31)
+  new RRD(rrd_file).create [ds1, ds2, ds3, rra_day, rra_month], {start: date}, () ->
+    targetTemp = 68
+    currentTemp = 68
+    rrd = new RRD(rrd_file)
+    iterationsRemaining = 60 * 24 * 31
+    addToRRD(rrd, currentTemp, date, iterationsRemaining)
+
+addToRRD = (rrd, currentTemp, date, iterationsRemaining) ->
+  return if iterationsRemaining == 0
+  oneMinute = 1000 * 60
+
+  currentTemp = currentTemp + Math.round(Math.random() * 4 - 2)
+  date = new Date(date.valueOf() + oneMinute)
+  rrd.update date, currentTemp, 68, 0, () =>
+    addToRRD(rrd, currentTemp, date, iterationsRemaining - 1)
 
 task 'rrd:fetch_recent', 'fetch recent data', () ->
   start = DateFormatter.rrd(new Date(new Date() - (1000*60*60*24)))
