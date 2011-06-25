@@ -2,21 +2,24 @@ class Graph
   constructor: (@slug, @graphLabel) ->
 
   init: () ->
-    this.loadJSON('day')
+    this.show('day')
     $('#past-day').click () =>
-      this.loadJSON('day')
+      this.show('day')
     $('#past-week').click () =>
-      this.loadJSON('week')
+      this.show('week')
     $('#past-month').click () =>
-      this.loadJSON('month')
+      this.show('month')
 
-  loadJSON: (windowSize) ->
-    $.getJSON(this.jsonPath(windowSize), (lineData) =>
+  show: (graphName) ->
+    this.loadJSON(graphName)
+    this.showDetails(graphName)
+    false
+
+  loadJSON: (graphName) ->
+    $.getJSON(this.jsonPath(graphName), (lineData) =>
       $('.spinner').fadeOut(200)
-      console.log("loaded data from #{this.jsonPath()}")
 
       lines = for line in lineData
-        console.log line
         { data: line.data, label: line.label }
 
       $.plot($('#holder'),
@@ -25,8 +28,17 @@ class Graph
           legend: { position: 'sw' }
         }
       )
-
     )
+
+  showDetails: (name) ->
+    $('.arrows').remove()
+    $('<span class="arrows">&#187;</span>').insertBefore($("#past-#{name} > a"))
+
+    $('.graph-details').each () ->
+      $(this).hide()
+
+    $('#graph-details-' + name).show()
+    $('#current-graph-name').text "Past #{name}"
 
   jsonPath: (path) ->
     "/#{@slug}/data/#{path}"

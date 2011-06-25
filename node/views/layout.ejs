@@ -47,7 +47,7 @@
 
       <div id="graph-details" class="grid_4">
         <div class="column-content">
-          Some data...
+          <%- partial(view.slug + "/graphDetails") %>
         </div>
       </div>
 
@@ -61,7 +61,7 @@
 
           <div class="content-header">Software</div>
           <div>
-            NodeJS (in coffeescript) is used to collect, manage, and serve the data, which is persisted in a Round Robin Database.
+            Coffeescript is used to collect, manage, and serve (with nodeJS) the data, which is persisted in a Round Robin Database. <a href="https://www.google.com/calendar/embed?src=963shrhe9d8g3d5h7le9uu72l8%40group.calendar.google.com&ctz=America/Chicago">Google Calendar</a> is used to remotely schedule the temperature settings.
           </div>
           <br />
 
@@ -79,8 +79,10 @@
       </div>
     </div>
     <script id="source" language="javascript" type="text/javascript">
-      var graph = new Graph("<%= view.slug %>");
-      graph.init();
+      $(document).ready(function() {
+        var graph = new Graph("<%= view.slug %>");
+        graph.init();
+      });
     </script>
   </body>
 </html>
