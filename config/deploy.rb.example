@@ -1,0 +1,29 @@
+# A very basic capistrano config
+
+set :application, "app"
+set :repository,  "repo"
+set :deploy_to, "/var/www/apps/#{application}"
+
+set :scm, :git
+set :git_enable_submodules, 1
+default_run_options[:pty] = true
+
+set :servername, "domain.com"
+role :web, servername
+role :app, servername
+
+namespace :deploy do
+  task :start do
+    run "cd #{current_path}/node && nohup bash -lc 'cake rrd:serve > ../log/#{application}.log &'"
+  end
+
+  task :stop do
+  end
+
+  task :restart do ; end
+end
+
+after 'deploy:finalize_update' do
+  run "rm #{release_path}/node/db -rf && ln -s #{shared_path}/db #{release_path}/node/db"
+  run "ln -s #{shared_path}/rrdSource #{release_path}/node/config/rrdSource"
+end

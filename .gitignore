@@ -3,6 +3,7 @@ nohup.out
 *.xml
 node/config/usbDev
 node/config/rrdSource
+config/deploy.rb
 
 temp.png
 thermostat.png
