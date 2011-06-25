@@ -5,5 +5,7 @@
   , "dependencies": {
       "express": "2.3.11"
     , "ejs": ">= 0.0.1"
+    , "sax": ">= 0.1.1"
+    , "coffee-script": ">= 1.1.1"
   }
 }
