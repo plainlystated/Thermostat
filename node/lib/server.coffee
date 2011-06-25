@@ -1,7 +1,7 @@
 express = require('express')
 UpdateSyncer = require('./updateSyncer').UpdateSyncer
 fs = require('fs')
-RRD = require('./rrd/lib/rrd').RRD
+RRD = require('./rrd/rrd').RRD
 DateFormatter = require('./dateFormatter').DateFormatter
 
 class Server

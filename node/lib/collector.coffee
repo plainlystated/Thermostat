@@ -1,5 +1,5 @@
 spawn = require('child_process').spawn
-RRD = require('./rrd/lib/rrd').RRD
+RRD = require('./rrd/rrd').RRD
 fs = require('fs')
 http = require('http')
 GoogleCalendar = require('./googleCalendar').GoogleCalendar

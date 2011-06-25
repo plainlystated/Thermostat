@@ -1,6 +1,6 @@
 sys = require('sys')
 
-RRD = require('./lib/rrd/lib/rrd').RRD
+RRD = require('./lib/rrd/rrd').RRD
 Collector= require('./lib/collector.coffee').Collector
 Server= require('./lib/server.coffee').Server
 GoogleCalendar = require('./lib/googleCalendar').GoogleCalendar

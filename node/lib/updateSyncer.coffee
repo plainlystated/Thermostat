@@ -1,7 +1,7 @@
 http = require('http')
 fs = require('fs')
 DateFormatter = require('./dateFormatter').DateFormatter
-RRD = require('./rrd/lib/rrd').RRD
+RRD = require('./rrd/rrd').RRD
 
 class UpdateSyncer
   constructor: (@host, @port, @app) ->
