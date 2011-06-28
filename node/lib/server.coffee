@@ -43,7 +43,7 @@ class Server
       @app.use(express.errorHandler())
     )
 
-    @app.get('/hot-or-not', (req, res) =>
+    @app.get('/', (req, res) =>
       res.render('index', { view: views['hotOrNot'] })
     )
 
@@ -73,10 +73,6 @@ class Server
             [timestampWithTimezoneOffset * 1000, record[dataSource]]
           line
         cb(data)
-
-    @app.get('/', (req, res) ->
-      res.redirect('/hot-or-not')
-    )
 
     @app.listen(3000)
     console.log("Express server listening on port %d", @app.address().port)
