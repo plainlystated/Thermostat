@@ -112,7 +112,7 @@ void setHvacStatus(int status) {
 }
 
 bool shouldTurnOffAc(float temp) {
-  if (temp < (desiredTemp - 4)) {
+  if (temp < (desiredTemp - 1)) {
     if (changeRequestTimelyEnough(lastStatusChangeRequest)) {
       return true;
     }
@@ -123,7 +123,7 @@ bool shouldTurnOffAc(float temp) {
 }
 
 bool shouldTurnOnAc(float temp) {
-  if (temp > (desiredTemp + 2)) {
+  if (temp > (desiredTemp + 1)) {
     if (changeRequestTimelyEnough(lastStatusChangeRequest)) {
       return true;
     }
@@ -134,7 +134,7 @@ bool shouldTurnOnAc(float temp) {
 }
 
 bool shouldTurnOffHeat(float temp) {
-  if (temp > (desiredTemp + 4)) {
+  if (temp > (desiredTemp + 1)) {
     if (changeRequestTimelyEnough(lastStatusChangeRequest)) {
       return true;
     }
@@ -145,7 +145,7 @@ bool shouldTurnOffHeat(float temp) {
 }
 
 bool shouldTurnOnHeat(float temp) {
-  if (temp < (desiredTemp - 2)) {
+  if (temp < (desiredTemp - 1)) {
     if (changeRequestTimelyEnough(lastStatusChangeRequest)) {
       return true;
     }
