@@ -41,11 +41,13 @@ task 'rrd:demo_data', 'fill with lots of sample data', (options) ->
   ds2 = "DS:target_temp:GAUGE:600:U:U"
   ds3 = "DS:state:GAUGE:600:U:U"
   rra_day = "RRA:AVERAGE:0.5:1:300"
+  rra_week = "RRA:AVERAGE:0.5:7:300"
   rra_month = "RRA:AVERAGE:0.5:31:300"
+  rra_year = "RRA:AVERAGE:0.5:352:1500"
 
   oneMinute = 1000 * 60
   date = new Date(new Date() - oneMinute * 60 * 24 * 31)
-  new RRD(rrd_file).create [ds1, ds2, ds3, rra_day, rra_month], {start: date}, () ->
+  new RRD(rrd_file).create [ds1, ds2, ds3, rra_day, rra_week, rra_month, rra_year], {start: date}, () ->
     targetTemp = 68
     currentTemp = 68
     rrd = new RRD(rrd_file)
@@ -56,7 +58,7 @@ addToRRD = (rrd, currentTemp, date, iterationsRemaining) ->
   return if iterationsRemaining == 0
   oneMinute = 1000 * 60
 
-  currentTemp = currentTemp + Math.round(Math.random() * 4 - 2)
+  currentTemp = currentTemp + Math.round(Math.random() * 10 - 5)
   date = new Date(date.valueOf() + oneMinute)
   rrd.update date, currentTemp, 68, 0, () =>
     addToRRD(rrd, currentTemp, date, iterationsRemaining - 1)
