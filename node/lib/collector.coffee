@@ -19,7 +19,7 @@ class Collector
       parsedLine = parseTemperatureLine(data)
       if parsedLine.currentTemp?
         console.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
-        rrd.update new Date, parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state, printError
+        rrd.update new Date, [parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state], printError
     )
 
     serial.stderr.on('data', (data) ->

@@ -78,6 +78,9 @@ task 'rrd:collect', 'listen for input on a file and push values to memcached', (
 task 'rrd:serve', 'Serve the app, and occasionally check for updates', () ->
   new Server(rrd_file, 3000)
 
+task 'rrd:serve:local', 'Serve the app, but don\'t check for updates', () ->
+  new Server(rrd_file, 3000, false)
+
 task 'google', 'google', () ->
   google = new GoogleCalendar
   google.getDetailed()

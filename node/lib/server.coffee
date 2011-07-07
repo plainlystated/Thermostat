@@ -5,7 +5,7 @@ RRD = require('./rrd/rrd').RRD
 DateFormatter = require('./dateFormatter').DateFormatter
 
 class Server
-  constructor: (rrdFile, port) ->
+  constructor: (rrdFile, port, fetchUpdates = true) ->
     views = {
       hotOrNot: {
         title: "Hot Or Not",
@@ -14,7 +14,7 @@ class Server
       }
     }
     this.startServer(views)
-    new UpdateSyncer(rrdSourceHost(), 80, views.hotOrNot.slug)
+    fetchUpdates ? new UpdateSyncer(rrdSourceHost(), 80, views.hotOrNot.slug)
 
   startServer: (views) ->
     @app = module.exports = express.createServer()
