@@ -20,7 +20,7 @@ class Graph
       $('.spinner').fadeOut(200)
 
       lines = for line in lineData
-        { data: line.data, label: line.label }
+        { data: line.data, label: line.label, color: line.color }
 
       $.plot($('#holder'),
         lines, {
