@@ -72,7 +72,7 @@ class Server
         ]
           lineOptions['data'] = for record in records
             timestampWithTimezoneOffset = parseInt(record.timestamp) - 60 * (new Date).getTimezoneOffset()
-            [timestampWithTimezoneOffset * 1000, record[dataSource]]
+            [timestampWithTimezoneOffset * 1000, record[lineOptions.label]]
           lineOptions
         cb(data)
 
