@@ -66,12 +66,14 @@ class Server
     flotData = (start, cb) ->
       end = DateFormatter.rrd(new Date())
       new RRD("./db/hot-or-not.rrd").fetch start, end, (records) ->
-        data = for dataSource in ['target_temp', 'temperature']
-          line = { label: dataSource }
-          line['data'] = for record in records
+        data = for lineOptions in [
+          { label: 'target_temp', color: 1},
+          { label: 'temperature', color: 0}
+        ]
+          lineOptions['data'] = for record in records
             timestampWithTimezoneOffset = parseInt(record.timestamp) - 60 * (new Date).getTimezoneOffset()
             [timestampWithTimezoneOffset * 1000, record[dataSource]]
-          line
+          lineOptions
         cb(data)
 
     @app.listen(3000)
