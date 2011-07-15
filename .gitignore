@@ -4,7 +4,7 @@ nohup.out
 node/config/usbDev
 node/config/rrdSource
 config/deploy.rb
-public/*.js
+node/public/*.js
 
 temp.png
 thermostat.png

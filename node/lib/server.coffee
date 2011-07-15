@@ -14,7 +14,8 @@ class Server
       }
     }
     this.startServer(views)
-    fetchUpdates ? new UpdateSyncer(rrdSourceHost(), 80, views.hotOrNot.slug)
+    if fetchUpdates
+      new UpdateSyncer(rrdSourceHost(), 80, views.hotOrNot.slug)
 
   startServer: (views) ->
     @app = module.exports = express.createServer()
