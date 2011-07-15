@@ -65,7 +65,7 @@ class Server
 
     flotData = (start, cb) ->
       end = DateFormatter.rrd(new Date())
-      new RRD("./db/hot-or-not.rrd").fetch start, end, (records) ->
+      new RRD("./db/hot-or-not.rrd").fetch start, end, (err, records) ->
         data = for lineOptions in [
           { label: 'target_temp', color: 1},
           { label: 'temperature', color: 0}

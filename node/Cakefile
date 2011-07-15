@@ -62,13 +62,13 @@ addToRRD = (rrd, currentTemp, date, iterationsRemaining) ->
 
   currentTemp = currentTemp + Math.round(Math.random() * 10 - 5)
   date = new Date(date.valueOf() + oneMinute)
-  rrd.update date, currentTemp, 68, 0, () =>
+  rrd.update date, [currentTemp, 68, 0], () =>
     addToRRD(rrd, currentTemp, date, iterationsRemaining - 1)
 
 task 'rrd:fetch_recent', 'fetch recent data', () ->
   start = DateFormatter.rrd(new Date(new Date() - (1000*60*60*24)))
   end = DateFormatter.rrd(new Date)
-  new RRD(rrd_file).fetch start, end, (records) ->
+  new RRD(rrd_file).fetch start, end, (err, records) ->
     for record in records
       console.log record
 
