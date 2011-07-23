@@ -5,19 +5,13 @@ RRD = require('./rrd/rrd').RRD
 DateFormatter = require('./dateFormatter').DateFormatter
 
 class Server
-  constructor: (rrdFile, port, fetchUpdates = true) ->
-    views = {
-      hotOrNot: {
-        title: "Hot Or Not",
-        tagLine: "Keeping you cool since 2011",
-        slug: "hot-or-not"
-      }
-    }
-    this.startServer(views)
+  constructor: (@apps, fetchUpdates = true) ->
+    this.startServer()
     if fetchUpdates
-      new UpdateSyncer(rrdSourceHost(), 80, views.hotOrNot.slug)
+      for name, app of @apps
+        new UpdateSyncer(rrdSourceHost(), 80, app.viewData.slug)
 
-  startServer: (views) ->
+  startServer: () ->
     @app = module.exports = express.createServer()
 
     publicDir = __dirname + '/../public'
@@ -45,28 +39,25 @@ class Server
     )
 
     @app.get('/', (req, res) =>
-      res.render('index', { view: views['hotOrNot'] })
+      app = @apps[req.headers.host.replace(/\..*$/, '')]
+      if app
+        res.render('index', { view: app.viewData })
+      else
+        res.send('Not Found', 404)
     )
 
-    @app.get '/hot-or-not/data/day', (req, res) =>
-      start = DateFormatter.rrd(new Date(new Date - (1000 * 60 * 60 * 24)))
-      flotData start, (data) ->
-        res.send(data)
+    @app.get '/:appName/data/:scope', (req, res) =>
+      app = @apps[req.params.appName]
+      start = this.lookupStartDate(req.params.scope)
+      if app && start
+        flotData app, DateFormatter.rrd(start), (data) ->
+          res.send(data)
+      else
+        res.send('Not found', 404)
 
-    @app.get '/hot-or-not/data/week', (req, res) =>
-      start = DateFormatter.rrd(new Date(new Date - (1000 * 60 * 60 * 24 * 7)))
-      flotData start, (data) ->
-        res.send(data)
-
-    @app.get '/hot-or-not/data/month', (req, res) =>
-      start = DateFormatter.rrd(new Date(new Date - (1000 * 60 * 60 * 24 * 31)))
-      flotData start, (data) ->
-        res.send(data)
-
-
-    flotData = (start, cb) ->
+    flotData = (app, start, cb) ->
       end = DateFormatter.rrd(new Date())
-      new RRD("./db/hot-or-not.rrd").fetch start, end, (err, records) ->
+      new RRD(app.rrdFilepath).fetch start, end, (err, records) ->
         data = for lineOptions in [
           { label: 'target_temp', color: 1},
           { label: 'temperature', color: 0}
@@ -82,5 +73,13 @@ class Server
 
   rrdSourceHost = () ->
     fs.readFileSync('./config/rrdSource').toString().replace(/(\n|\r)+$/, '')
+
+  lookupStartDate: (scope) ->
+    switch scope
+      when "day"   then new Date(new Date - (1000 * 60 * 60 * 24))
+      when "week"  then new Date(new Date - (1000 * 60 * 60 * 24 * 7))
+      when "month" then new Date(new Date - (1000 * 60 * 60 * 24 * 31))
+      else null
+
 
 exports.Server = Server

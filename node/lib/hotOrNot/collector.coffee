@@ -1,14 +1,12 @@
 spawn = require('child_process').spawn
-RRD = require('./rrd/rrd').RRD
+RRD = require('../rrd/rrd').RRD
 fs = require('fs')
-http = require('http')
 GoogleCalendar = require('./googleCalendar').GoogleCalendar
 
 class Collector
-  constructor: (@rrdFile, port) ->
+  constructor: (@rrdFile) ->
     @rrd = new RRD(rrdFile)
     this.collectData(@rrd)
-    this.serveRRDData(port)
     @googleCalendar = new GoogleCalendar
 
   collectData: (rrd) =>
@@ -32,13 +30,6 @@ class Collector
         serial.stdin.write("#{String.fromCharCode(current.temperature)}\n")
     , 10000
 
-  serveRRDData: (port) ->
-    http.createServer((req, res) =>
-      res.writeHead(200, {'Content-Type': 'text/xml'})
-      @rrd.dump (err, xml) ->
-        res.end xml
-    ).listen(port, "0.0.0.0")
-    console.log("Listening for RRD data requests on port #{port}")
 
   parseTemperatureLine = (string) ->
     result = string.split(" ")

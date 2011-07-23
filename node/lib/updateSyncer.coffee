@@ -16,7 +16,7 @@ class UpdateSyncer
     newFilenameBase = "#{@app}-#{timestamp}"
     file = fs.createWriteStream("#{path}/#{newFilenameBase}.xml")
 
-    console.log "Checking for updates from #{@host}:#{@port} for #{@app} (timestamp: #{timestamp})"
+    console.log "Checking for updates from #{@host}:#{@port} for #{@app} @ #{timestamp}"
     request = http.request {
       host: @host,
       port: @port,

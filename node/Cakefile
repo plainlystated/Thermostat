@@ -1,9 +1,13 @@
 sys = require('sys')
 
 RRD = require('./lib/rrd/rrd').RRD
-Collector= require('./lib/collector.coffee').Collector
 Server= require('./lib/server.coffee').Server
-GoogleCalendar = require('./lib/googleCalendar').GoogleCalendar
+GoogleCalendar = require('./lib/hotOrNot/googleCalendar').GoogleCalendar
+DataServer = require('./lib/dataServer').DataServer
+
+apps = {
+  "hot-or-not": require('./lib/hotOrNot/app').App
+}
 
 rrd_file = "./db/hot-or-not.rrd"
 DateFormatter = require('./lib/dateFormatter').DateFormatter
@@ -72,14 +76,17 @@ task 'rrd:fetch_recent', 'fetch recent data', () ->
     for record in records
       console.log record
 
-task 'rrd:collect', 'listen for input on a file and push values to memcached', () ->
-  new Collector(rrd_file, 3001)
+task 'collect', 'collect data for apps', () ->
+  new DataServer(apps, 3001)
 
-task 'rrd:serve', 'Serve the app, and occasionally check for updates', () ->
-  new Server(rrd_file, 3000)
+  for name, app of apps
+    new app.Collector(app.rrdFilepath, 3001)
 
-task 'rrd:serve:local', 'Serve the app, but don\'t check for updates', () ->
-  new Server(rrd_file, 3000, false)
+task 'server', 'Serve the app, and occasionally check for updates', () ->
+  new Server(apps)
+
+task 'server:local', 'Serve the app, but don\'t check for updates', () ->
+  new Server(apps, false)
 
 task 'google', 'google', () ->
   google = new GoogleCalendar

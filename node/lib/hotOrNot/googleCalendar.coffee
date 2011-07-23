@@ -1,6 +1,6 @@
 http = require('http')
 sax = require("sax")
-DateFormatter = require('./dateFormatter').DateFormatter
+DateFormatter = require('../dateFormatter').DateFormatter
 
 class GoogleCalendar
   constructor: () ->
