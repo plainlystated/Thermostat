@@ -9,7 +9,7 @@ class Server
     this.startServer()
     if fetchUpdates
       for name, app of @apps
-        new UpdateSyncer(rrdSourceHost(), 80, app.viewData.slug)
+        new UpdateSyncer(rrdSourceHost(), 3001, app.viewData.slug)
 
   startServer: () ->
     @app = module.exports = express.createServer()
