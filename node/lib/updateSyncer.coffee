@@ -20,7 +20,7 @@ class UpdateSyncer
     request = http.request {
       host: @host,
       port: @port,
-      path: "/#{@app}/rrd.xml",
+      path: "/#{@app}",
       method: "GET"
     }, (response) =>
       console.log(" - #{response.statusCode}")
