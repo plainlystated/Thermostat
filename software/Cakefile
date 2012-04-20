@@ -1,5 +1,4 @@
 spawn = require('child_process').spawn
-sys = require('sys')
 
 RRD = require('./lib/rrd/rrd').RRD
 Server= require('./lib/server.coffee').Server
