@@ -1,0 +1,10 @@
+{
+    "name": "Thermostat"
+  , "author": "Patrick Schless <npm@bitesback.com> (http://www.plainlystated.com)"
+  , "version": "1.0.0"
+  , "dependencies": {
+      "coffee-script": ">= 1.1.1"
+    , "mocha": ">= 1.0.1"
+    , "should": ">= 0.6.1"
+  }
+}
