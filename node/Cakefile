@@ -1,5 +1,0 @@
-spawn = require('child_process').spawn
-
-task 'mocha:watch', 'run mocha in watch mode', () ->
-  proc = spawn('node_modules/.bin/mocha', [], { customFds: [0,1,2] })
-  proc.on('exit', process.exit);

@@ -1,3 +1,4 @@
+spawn = require('child_process').spawn
 sys = require('sys')
 
 RRD = require('./lib/rrd/rrd').RRD
@@ -91,6 +92,10 @@ task 'server:local', 'Serve the app, but don\'t check for updates', () ->
 task 'google', 'google', () ->
   google = new GoogleCalendar
   google.getDetailed()
+
+task 'mocha:watch', 'run mocha in watch mode', () ->
+  proc = spawn('node_modules/.bin/mocha', [], { customFds: [0,1,2] })
+  proc.on('exit', process.exit);
 
 printError = (err) ->
   console.log(" - #{err}") if err?
