@@ -1,13 +1,7 @@
 spawn = require('child_process').spawn
 
-RRD = require('./lib/rrd/rrd').RRD
-Server= require('./lib/server.coffee').Server
 GoogleCalendar = require('./lib/hotOrNot/googleCalendar').GoogleCalendar
 DataServer = require('./lib/dataServer').DataServer
-
-apps = {
-  "hot-or-not": require('./lib/hotOrNot/app').App
-}
 
 rrd_file = "./db/hot-or-not.rrd"
 DateFormatter = require('./lib/dateFormatter').DateFormatter
@@ -82,11 +76,6 @@ task 'collect', 'collect data for apps', () ->
   for name, app of apps
     new app.Collector(app.rrdFilepath, 3001)
 
-task 'server', 'Serve the app, and occasionally check for updates', () ->
-  new Server(apps)
-
-task 'server:local', 'Serve the app, but don\'t check for updates', () ->
-  new Server(apps, false)
 
 task 'google', 'google', () ->
   google = new GoogleCalendar
