@@ -3,10 +3,7 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "2.3.11"
-    , "ejs": ">= 0.0.1"
-    , "sax": ">= 0.1.1"
-    , "coffee-script": ">= 1.1.1"
+      "coffee-script": ">= 1.1.1"
     , "mocha": ">= 1.0.1"
     , "should": ">= 0.6.1"
   }
