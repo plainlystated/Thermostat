@@ -1,6 +1,8 @@
 spawn = require('child_process').spawn
+app = require('./lib/app').App
+RRD = require('./lib/rrd/rrd').RRD
 
-GoogleCalendar = require('./lib/hotOrNot/googleCalendar').GoogleCalendar
+GoogleCalendar = require('./lib/googleCalendar').GoogleCalendar
 DataServer = require('./lib/dataServer').DataServer
 
 rrd_file = "./db/hot-or-not.rrd"
@@ -71,11 +73,8 @@ task 'rrd:fetch_recent', 'fetch recent data', () ->
       console.log record
 
 task 'collect', 'collect data for apps', () ->
-  new DataServer(apps, 3001)
-
-  for name, app of apps
-    new app.Collector(app.rrdFilepath, 3001)
-
+  new DataServer(app, 3001)
+  new app.Collector(app.rrdFilepath)
 
 task 'google', 'google', () ->
   google = new GoogleCalendar
