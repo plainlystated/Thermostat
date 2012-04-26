@@ -25,7 +25,7 @@ class Collector
       data = data.toString()
       parsedLine = parseTemperatureLine(data)
       if parsedLine.currentTemp?
-        collector.log(" - #{parsedLine.currentTemp}, #{parsedLine.state}")
+        collector.log(" - #{parsedLine.currentTemp}, #{parsedLine.targetTemp}, #{parsedLine.state}")
         rrd.update new Date, [parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state], printError
 
     serial.stderr.on('data', (data) ->
