@@ -58,7 +58,7 @@ class Collector
       return {}
 
   printError = (err) ->
-    this.log(" - #{err}") if err?
+    console.log(" - #{err}") if err?
 
   usbDev = () ->
     fs.readFileSync('./config/usbDev').toString().replace(/(\n|\r)+$/, '')
