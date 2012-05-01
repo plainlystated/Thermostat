@@ -12,11 +12,13 @@ task 'rrd:create', 'Create new RRD file', () ->
   console.log "Creating empty RRD file"
 
   ds1 = "DS:temperature:GAUGE:600:U:U"
+  ds2 = "DS:target_temp:GAUGE:600:U:U"
+  ds3 = "DS:state:GAUGE:600:U:U"
   rra_day = "RRA:AVERAGE:0.5:1:300"
   rra_week = "RRA:AVERAGE:0.5:7:300"
   rra_month = "RRA:AVERAGE:0.5:31:300"
   rra_year = "RRA:AVERAGE:0.5:352:1500"
-  new RRD(rrd_file).create([ds1, rra_day, rra_week, rra_month, rra_year], {}, printError)
+  new RRD(rrd_file).create([ds1, ds2, ds3, rra_day, rra_week, rra_month, rra_year], {}, printError)
 
 task 'rrd:graph:day', 'Graph recent temps', () ->
   new RRD(rrd_file).graph("temp.png", [{name: "temperature", color: "#FF0000"}, {name: "target_temp", color: "#FF5500"}], {start: DateFormatter.rrd(new Date(new Date() - (1000*60*60*8)))}, printError)
@@ -38,6 +40,8 @@ task 'rrd:redo', 'Recreate RRD file', () ->
 task 'rrd:demo_data', 'fill with lots of sample data', (options) ->
   invoke 'rrd:delete'
   ds1 = "DS:temperature:GAUGE:600:U:U"
+  ds2 = "DS:target_temp:GAUGE:600:U:U"
+  ds3 = "DS:state:GAUGE:600:U:U"
   rra_day = "RRA:AVERAGE:0.5:1:300"
   rra_week = "RRA:AVERAGE:0.5:7:300"
   rra_month = "RRA:AVERAGE:0.5:31:300"
@@ -45,7 +49,7 @@ task 'rrd:demo_data', 'fill with lots of sample data', (options) ->
 
   oneMinute = 1000 * 60
   date = new Date(new Date() - oneMinute * 60 * 24 * 31)
-  new RRD(rrd_file).create [ds1, rra_day, rra_week, rra_month, rra_year], {start: date}, () ->
+  new RRD(rrd_file).create [ds1, ds2, ds3, rra_day, rra_week, rra_month, rra_year], {start: date}, () ->
     targetTemp = 68
     currentTemp = 68
     rrd = new RRD(rrd_file)
@@ -71,6 +75,10 @@ task 'rrd:fetch_recent', 'fetch recent data', () ->
 task 'collect', 'collect data for apps', () ->
   new DataServer(app, 3001)
   new app.Collector(app.rrdFilepath)
+
+task 'google', 'google', () ->
+  google = new GoogleCalendar
+  google.getDetailed()
 
 task 'mocha:watch', 'run mocha in watch mode', () ->
   proc = spawn('node_modules/.bin/mocha', [], { customFds: [0,1,2] })

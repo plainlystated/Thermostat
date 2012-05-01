@@ -7,6 +7,7 @@ class Collector
   constructor: (@rrdFile) ->
     @rrd = this.rrd(rrdFile)
     this.collectData(@rrd)
+    @calendar = this.googleCalendar()
 
   rrd: (filename) ->
     new RRD(filename)
@@ -24,19 +25,36 @@ class Collector
       data = data.toString()
       parsedLine = parseTemperatureLine(data)
       if parsedLine.currentTemp?
-        collector.log(" - #{parsedLine.currentTemp}")
-        rrd.update new Date, [parsedLine.currentTemp], printError
+        collector.log(" - #{parsedLine.currentTemp}, #{parsedLine.targetTemp}, #{parsedLine.state}")
+        rrd.update new Date, [parsedLine.currentTemp, parsedLine.targetTemp, parsedLine.state], printError
 
     serial.stderr.on('data', (data) ->
       collector.log('stderr: ' + data)
     )
 
+    setInterval () =>
+      @calendar.getCurrent (current) ->
+        console.log "google calendar update: " + current.temperature
+        serial.stdin.write("#{String.fromCharCode(current.temperature)}\n")
+    , 60000
+
   log: (msg) ->
     console.log msg
 
-  parseTemperatureLine = (currentTemp) ->
+  parseTemperatureLine = (string) ->
+    result = string.split(" ")
+    currentTemp = result[0]
+    targetTemp = result[1]
+    state = result[2]
+
     if currentTemp.match("^[0-9.]*$")
-      return { currentTemp: currentTemp }
+      if state.match(/heat-on/)
+        s = 1
+      else if state.match(/ac-on/)
+        s = -1
+      else
+        s = 0
+      return { currentTemp: currentTemp, targetTemp: targetTemp, state: s }
     else
       return {}
 

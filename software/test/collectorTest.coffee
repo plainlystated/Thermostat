@@ -21,7 +21,16 @@ CollectorTestHelper =
       fakeProxy
     Collector.prototype.log = (msg) ->
 
-    [fakeProxy, fakeRRD]
+    fakeGoogleCalendar =
+      getCurrent: (callback) ->
+        response =
+          temperature: googleCalendarTemp
+        callback(response)
+
+    Collector.prototype.googleCalendar = () ->
+      fakeGoogleCalendar
+
+    [fakeProxy, fakeRRD, fakeGoogleCalendar]
 
 describe 'Collector', ->
   before ->
@@ -31,9 +40,31 @@ describe 'Collector', ->
     this.clock.restore()
 
   describe 'collectData', ->
-    it 'records the current temp', ->
-      [fakeProxy, fakeRRD] = CollectorTestHelper.setupFakes()
+    it 'marks the hvac value as 1 if the heat is on', ->
+      [fakeProxy, fakeRRD, fakeGoogleCalendar] = CollectorTestHelper.setupFakes()
       new Collector('filename')
 
-      fakeProxy.stdout.emit('data', '60.0')
-      fakeRRD.update.args[0][1].should.eql(['60.0'])
+      fakeProxy.stdout.emit('data', '60.0 62 heat-on')
+      fakeRRD.update.args[0][1].should.eql(['60.0', '62', 1])
+
+    it 'marks the hvac value as 1 if the ac is on', ->
+      [fakeProxy, fakeRRD, fakeGoogleCalendar] = CollectorTestHelper.setupFakes()
+      new Collector('filename')
+
+      fakeProxy.stdout.emit('data', '60.0 62 ac-on')
+      fakeRRD.update.args[0][1].should.eql(['60.0', '62', -1])
+
+    it 'marks the hvac value as 0 if the hvac is off', ->
+      [fakeProxy, fakeRRD, fakeGoogleCalendar] = CollectorTestHelper.setupFakes()
+      new Collector('filename')
+
+      fakeProxy.stdout.emit('data', '60.0 62 off')
+      fakeRRD.update.args[0][1].should.eql(['60.0', '62', 0])
+
+  describe 'google calendar updater', ->
+    it 'checks for updates from google calendar and sends them to the hardware', ->
+      [fakeProxy, fakeRRD, fakeGoogleCalendar] = CollectorTestHelper.setupFakes(72)
+      collector = new Collector('filename')
+
+      this.clock.tick(60000)
+      fakeProxy.stdin.toString('utf8', 0, 2).should.eql("#{String.fromCharCode(72)}\n")
