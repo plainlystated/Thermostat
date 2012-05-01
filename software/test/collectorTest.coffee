@@ -63,8 +63,8 @@ describe 'Collector', ->
 
   describe 'google calendar updater', ->
     it 'checks for updates from google calendar and sends them to the hardware', ->
-      [fakeProxy, fakeRRD, fakeGoogleCalendar] = CollectorTestHelper.setupFakes("75")
+      [fakeProxy, fakeRRD, fakeGoogleCalendar] = CollectorTestHelper.setupFakes(72)
       collector = new Collector('filename')
 
-      this.clock.tick(1000)
-      fakeProxy.stdin.toString('utf8', 0, 3).should.eql("75\n")
+      this.clock.tick(60000)
+      fakeProxy.stdin.toString('utf8', 0, 2).should.eql("#{String.fromCharCode(72)}\n")
