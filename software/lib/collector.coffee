@@ -34,7 +34,12 @@ class Collector
   log: (msg) ->
     console.log msg
 
-  parseTemperatureLine = (currentTemp) ->
+  parseTemperatureLine = (line) ->
+    result = line.split(" ")
+    currentTemp = result[0]
+    targetTemp = result[1]
+    state = result[2]
+
     if currentTemp.match("^[0-9.]*$")
       return { currentTemp: currentTemp }
     else
